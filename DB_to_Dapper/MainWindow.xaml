@@ -1,0 +1,35 @@
+﻿<Window x:Class="DB_to_Dapper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DB_to_Dapper"
+        mc:Ignorable="d"
+		d:DataContext="{d:DesignInstance Type=local:Model}"
+        Title="MainWindow" Height="450" Width="800">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="3*"/>
+			<RowDefinition Height="auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="1*"/>
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Row="0" Grid.Column="0" Text="Connection Str" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+		<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ConnectionString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Margin="3"/>
+
+		<TextBlock Grid.Row="1" Grid.Column="0" Text="SQL Query" HorizontalAlignment="Right"/>
+		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SQLString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3"/>
+
+		<GridSplitter Grid.Row="2" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
+		
+		<TextBlock Grid.Row="3" Grid.Column="0" Text="Result Code" HorizontalAlignment="Right"/>
+		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3"/>
+		
+		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding ConvertCommad}" Margin="3"/>
+	</Grid>
+</Window>
