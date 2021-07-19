@@ -42,12 +42,25 @@ namespace DB_to_Dapper
 				{
 					if (!string.IsNullOrWhiteSpace(ModelMain.SQLString))
 					{
-						var classCode = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.DapperContrib);
-						ModelMain.ResultString = classCode;
+						if (ModelMain.AddDapperAttributes)
+						{
+							ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.DapperContrib);
+						}
+						else
+						{
+							ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.Default);
+						}
 					}
 					else
 					{
-						ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
+						if (ModelMain.AddDapperAttributes)
+						{
+							ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
+						}
+						else
+						{
+							ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.Default);
+						}
 					}
 				}
 			}

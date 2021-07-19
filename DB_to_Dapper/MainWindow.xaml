@@ -27,7 +27,10 @@
 
 		<GridSplitter Grid.Row="2" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
 		
-		<TextBlock Grid.Row="3" Grid.Column="0" Text="Result Code" HorizontalAlignment="Right"/>
+		<StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
+			<TextBlock Text="Result Code" HorizontalAlignment="Right"/>
+			<CheckBox Content="Dapper" HorizontalAlignment="Right" IsChecked="{Binding AddDapperAttributes}"/>
+		</StackPanel>
 		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3"/>
 		
 		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding ConvertCommad}" Margin="3"/>

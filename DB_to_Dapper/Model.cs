@@ -46,6 +46,17 @@ namespace DB_to_Dapper
 			}
 		}
 
+		private bool _AddDapperAttributes;
+		public bool AddDapperAttributes
+		{
+			get { return _AddDapperAttributes; }
+			set
+			{
+				_AddDapperAttributes = value;
+				SendPropertyChanged(nameof(AddDapperAttributes));
+			}
+		}
+
 		public ConvertCommad ConvertCommad { get; }
 
 		public Model()
