@@ -38,30 +38,40 @@ namespace DB_to_Dapper
 		{
 			if (ModelMain != null)
 			{
-				using (var connection = new SqlConnection(ModelMain.ConnectionString))
+				try
 				{
-					if (!string.IsNullOrWhiteSpace(ModelMain.SQLString))
+					using (var connection = new SqlConnection(ModelMain.ConnectionString))
 					{
-						if (ModelMain.AddDapperAttributes)
+						if (!string.IsNullOrWhiteSpace(ModelMain.SQLString))
 						{
-							ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.DapperContrib);
+							if (ModelMain.AddDapperAttributes)
+							{
+								ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.DapperContrib);
+							}
+							else
+							{
+								ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.Default);
+							}
 						}
 						else
 						{
-							ModelMain.ResultString = connection.GenerateClass(ModelMain.SQLString, GeneratorBehavior.Default);
+							if (ModelMain.AddDapperAttributes)
+							{
+								ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
+							}
+							else
+							{
+								ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.Default);
+							}
 						}
+
+						ModelMain.ErrorOccurred = false;
 					}
-					else
-					{
-						if (ModelMain.AddDapperAttributes)
-						{
-							ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
-						}
-						else
-						{
-							ModelMain.ResultString = connection.GenerateAllTables(GeneratorBehavior.Default);
-						}
-					}
+				}
+				catch (Exception ex)
+				{
+					ModelMain.ResultString = ex.Message;
+					ModelMain.ErrorOccurred = true;
 				}
 			}
 		}

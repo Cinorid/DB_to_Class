@@ -57,6 +57,17 @@ namespace DB_to_Dapper
 			}
 		}
 
+		private bool _ErrorOccurred;
+		public bool ErrorOccurred
+		{
+			get { return _ErrorOccurred; }
+			set
+			{
+				_ErrorOccurred = value;
+				SendPropertyChanged(nameof(ErrorOccurred));
+			}
+		}
+
 		public ConvertCommad ConvertCommad { get; }
 
 		public Model()

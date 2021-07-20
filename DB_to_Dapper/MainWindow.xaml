@@ -23,7 +23,7 @@
 		<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ConnectionString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Margin="3"/>
 
 		<TextBlock Grid.Row="1" Grid.Column="0" Text="SQL Query" HorizontalAlignment="Right"/>
-		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SQLString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3"/>
+		<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SQLString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Margin="3"/>
 
 		<GridSplitter Grid.Row="2" Grid.ColumnSpan="2" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
 		
@@ -31,7 +31,17 @@
 			<TextBlock Text="Result Code" HorizontalAlignment="Right"/>
 			<CheckBox Content="Dapper" HorizontalAlignment="Right" IsChecked="{Binding AddDapperAttributes}"/>
 		</StackPanel>
-		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3"/>
+		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3">
+			<TextBox.Style>
+				<Style TargetType="TextBox">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding ErrorOccurred}" Value="True">
+							<Setter Property="Foreground" Value="Red"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</TextBox.Style>
+		</TextBox>
 		
 		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding ConvertCommad}" Margin="3"/>
 	</Grid>
