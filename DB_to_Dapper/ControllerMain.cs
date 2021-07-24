@@ -68,11 +68,11 @@ namespace DB_to_Dapper
 			}
 		}
 
-		public CommadConvert CommadConvert { get; }
+		public CommandConvert CommandConvert { get; }
 
 		public ControllerMain()
 		{
-			CommadConvert = new CommadConvert(this);
+			CommandConvert = new CommandConvert(this);
 		}
 	}
 }

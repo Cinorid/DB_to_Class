@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace DB_to_Dapper
 {
-	public class CommadConvert : ICommand
+	public class CommandConvert : ICommand
 	{
 		public ControllerMain ModelMain { get; set; }
 
@@ -16,7 +16,7 @@ namespace DB_to_Dapper
 			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		public CommadConvert(ControllerMain model)
+		public CommandConvert(ControllerMain model)
 		{
 			ModelMain = model;
 		}

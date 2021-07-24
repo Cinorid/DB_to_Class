@@ -13,5 +13,23 @@ namespace DB_to_Dapper
 	/// </summary>
 	public partial class App : Application
 	{
+		public ControllerMain Controller { get; set; }
+
+		protected override void OnStartup(StartupEventArgs e)
+		{
+			//base.OnStartup(e);
+
+			Controller = new ControllerMain()
+			{
+				ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True",
+			};
+
+			MainWindow = new MainWindow()
+			{
+				DataContext = Controller
+			};
+
+			MainWindow.ShowDialog();
+		}
 	}
 }

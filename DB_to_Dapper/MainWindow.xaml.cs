@@ -23,11 +23,6 @@ namespace DB_to_Dapper
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			DataContext = new ControllerMain
-			{
-				ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True",
-			};
 		}
 	}
 }
