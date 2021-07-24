@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DB_to_Dapper"
         mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=local:Model}"
+		d:DataContext="{d:DesignInstance Type=local:ControllerMain}"
         Title="MainWindow" Height="450" Width="800">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -35,14 +35,14 @@
 			<TextBox.Style>
 				<Style TargetType="TextBox">
 					<Style.Triggers>
-						<DataTrigger Binding="{Binding ErrorOccurred}" Value="True">
+						<DataTrigger Binding="{Binding ErrorOccurred}" Value="true">
 							<Setter Property="Foreground" Value="Red"/>
 						</DataTrigger>
 					</Style.Triggers>
 				</Style>
 			</TextBox.Style>
 		</TextBox>
-		
-		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding ConvertCommad}" Margin="3"/>
+
+		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding CommadConvert}" Margin="3" FontWeight="Bold" Background="Green"/>
 	</Grid>
 </Window>

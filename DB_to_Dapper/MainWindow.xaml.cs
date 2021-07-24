@@ -24,7 +24,7 @@ namespace DB_to_Dapper
 		{
 			InitializeComponent();
 
-			DataContext = new Model
+			DataContext = new ControllerMain
 			{
 				ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True",
 			};

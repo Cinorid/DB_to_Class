@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DB_to_Dapper
 {
-	public class Model : INotifyPropertyChanged
+	public class ControllerMain : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void SendPropertyChanged(string propName)
@@ -68,11 +68,11 @@ namespace DB_to_Dapper
 			}
 		}
 
-		public ConvertCommad ConvertCommad { get; }
+		public CommadConvert CommadConvert { get; }
 
-		public Model()
+		public ControllerMain()
 		{
-			 ConvertCommad = new ConvertCommad(this);
+			CommadConvert = new CommadConvert(this);
 		}
 	}
 }
