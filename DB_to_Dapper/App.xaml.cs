@@ -19,10 +19,7 @@ namespace DB_to_Dapper
 		{
 			//base.OnStartup(e);
 
-			Controller = new ControllerMain()
-			{
-				ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True",
-			};
+			Controller = new ControllerMain();
 
 			MainWindow = new MainWindow()
 			{

@@ -73,6 +73,8 @@ namespace DB_to_Dapper
 		public ControllerMain()
 		{
 			CommandConvert = new CommandConvert(this);
+
+			ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True";
 		}
 	}
 }
