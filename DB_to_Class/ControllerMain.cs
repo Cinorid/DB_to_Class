@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace DB_to_Dapper
+namespace DB_to_Class
 {
 	public class ControllerMain : INotifyPropertyChanged
 	{
@@ -75,6 +75,37 @@ namespace DB_to_Dapper
 			CommandConvert = new CommandConvert(this);
 
 			ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True";
+
+			//for (int i = 0; i < 999999999; i++) ;
+
+			//int a = 0;
+			//int b = 0;
+			//int c = a / b;
+
+			//string test = null;
+			//test.Trim();
+
+			//try
+			//{
+			//	//int a = 0;
+			//	//int b = 0;
+			//	//int c = a / b;
+
+			//	string test = null;
+			//	test.Trim();
+			//}
+			//catch (DivideByZeroException)
+			//{
+			//	throw new DivideByZeroException("خطای تقسیم بر صفر در بخش محاسبه شسیشسیشسی");
+			//}
+			//catch (NullReferenceException)
+			//{
+			//	throw new DivideByZeroException("خطای عدم مقدار دهی پارامتر طططططط");
+			//}
+			//catch (Exception ex)
+			//{
+			//	throw new DivideByZeroException($"خطای نامشخص: {ex.Message}");
+			//}
 		}
 	}
 }

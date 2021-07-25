@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Windows.Input;
 
-namespace DB_to_Dapper
+namespace DB_to_Class
 {
 	public class CommandConvert : ICommand
 	{
