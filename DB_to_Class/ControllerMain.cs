@@ -76,7 +76,7 @@ namespace DB_to_Class
 
 			ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True";
 
-			//for (int i = 0; i < 999999999; i++) ;
+			for (int i = 0; i < 999999999; i++) ;
 
 			//int a = 0;
 			//int b = 0;
@@ -100,7 +100,7 @@ namespace DB_to_Class
 			//}
 			//catch (NullReferenceException)
 			//{
-			//	throw new DivideByZeroException("خطای عدم مقدار دهی پارامتر طططططط");
+			//	throw new NullReferenceException("خطای عدم مقدار دهی پارامتر طططططط");
 			//}
 			//catch (Exception ex)
 			//{
