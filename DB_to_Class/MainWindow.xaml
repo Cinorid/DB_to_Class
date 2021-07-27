@@ -43,6 +43,6 @@
 			</TextBox.Style>
 		</TextBox>
 
-		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding CommandConvert}" Margin="3" FontWeight="Bold" Background="Green"/>
+		<Button Grid.Row="4" Grid.ColumnSpan="2" Content="Convert" Command="{Binding CommandConvert}" CommandParameter="{Binding .}" Margin="3" FontWeight="Bold" Background="Green"/>
 	</Grid>
 </Window>

@@ -68,12 +68,10 @@ namespace DB_to_Class
 			}
 		}
 
-		public CommandConvert CommandConvert { get; }
+		public CommandConvert CommandConvert { get; } = new CommandConvert();
 
 		public ControllerMain()
 		{
-			CommandConvert = new CommandConvert(this);
-
 			ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True";
 
 			for (int i = 0; i < 999999999; i++) ;

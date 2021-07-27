@@ -8,21 +8,15 @@ namespace DB_to_Class
 {
 	public class CommandConvert : ICommand
 	{
-		public ControllerMain Controller { get; set; }
-
 		public event EventHandler CanExecuteChanged
 		{
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		public CommandConvert(ControllerMain controller)
-		{
-			Controller = controller;
-		}
-
 		public bool CanExecute(object parameter)
 		{
+			var Controller = parameter as ControllerMain;
 			if (Controller != null)
 			{
 				if (!string.IsNullOrWhiteSpace(Controller.ConnectionString))
@@ -36,6 +30,7 @@ namespace DB_to_Class
 
 		public void Execute(object parameter)
 		{
+			var Controller = parameter as ControllerMain;
 			if (Controller != null)
 			{
 				try
