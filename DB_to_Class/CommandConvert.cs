@@ -6,20 +6,14 @@ using System.Windows.Input;
 
 namespace DB_to_Class
 {
-	public class CommandConvert : ICommand
+	public class CommandConvert : CommandBase
 	{
-		public event EventHandler CanExecuteChanged
+		public override bool CanExecute(object parameter)
 		{
-			add => CommandManager.RequerySuggested += value;
-			remove => CommandManager.RequerySuggested -= value;
-		}
-
-		public bool CanExecute(object parameter)
-		{
-			var Controller = parameter as ControllerMain;
-			if (Controller != null)
+			var controller = parameter as ControllerMain;
+			if (controller != null)
 			{
-				if (!string.IsNullOrWhiteSpace(Controller.ConnectionString))
+				if (!string.IsNullOrWhiteSpace(controller.ConnectionString))
 				{
 					return true;
 				}
@@ -28,45 +22,45 @@ namespace DB_to_Class
 			return false;
 		}
 
-		public void Execute(object parameter)
+		public override void Execute(object parameter)
 		{
-			var Controller = parameter as ControllerMain;
-			if (Controller != null)
+			var controller = parameter as ControllerMain;
+			if (controller != null)
 			{
 				try
 				{
-					using (var connection = new SqlConnection(Controller.ConnectionString))
+					using (var connection = new SqlConnection(controller.ConnectionString))
 					{
-						if (!string.IsNullOrWhiteSpace(Controller.SQLString))
+						if (!string.IsNullOrWhiteSpace(controller.SQLString))
 						{
-							if (Controller.AddDapperAttributes)
+							if (controller.AddDapperAttributes)
 							{
-								Controller.ResultString = connection.GenerateClass(Controller.SQLString, GeneratorBehavior.DapperContrib);
+								controller.ResultString = connection.GenerateClass(controller.SQLString, GeneratorBehavior.DapperContrib);
 							}
 							else
 							{
-								Controller.ResultString = connection.GenerateClass(Controller.SQLString, GeneratorBehavior.Default);
+								controller.ResultString = connection.GenerateClass(controller.SQLString, GeneratorBehavior.Default);
 							}
 						}
 						else
 						{
-							if (Controller.AddDapperAttributes)
+							if (controller.AddDapperAttributes)
 							{
-								Controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
+								controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
 							}
 							else
 							{
-								Controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.Default);
+								controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.Default);
 							}
 						}
 
-						Controller.ErrorOccurred = false;
+						controller.ErrorOccurred = false;
 					}
 				}
 				catch (Exception ex)
 				{
-					Controller.ResultString = ex.Message;
-					Controller.ErrorOccurred = true;
+					controller.ResultString = ex.Message;
+					controller.ErrorOccurred = true;
 				}
 			}
 		}

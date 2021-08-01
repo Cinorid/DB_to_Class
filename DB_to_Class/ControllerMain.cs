@@ -5,14 +5,8 @@ using System.Text;
 
 namespace DB_to_Class
 {
-	public class ControllerMain : INotifyPropertyChanged
+	public class ControllerMain : ObservableObject
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
-		public void SendPropertyChanged(string propName)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-		}
-
 		private string _ConnectionString;
 		public string ConnectionString
 		{
