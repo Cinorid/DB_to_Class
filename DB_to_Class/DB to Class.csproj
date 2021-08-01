@@ -4,6 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <StartupObject>DB_to_Class.App</StartupObject>
+    <ApplicationIcon>database_restore.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
