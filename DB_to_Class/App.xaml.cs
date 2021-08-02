@@ -13,8 +13,8 @@ namespace DB_to_Class
 	/// </summary>
 	public partial class App : Application
 	{
-		public ControllerMain Controller { get; set; }
-		public WindowSplash Splash = new WindowSplash();
+		public static ControllerMain Controller { get; set; }
+		public static WindowSplash Splash = new WindowSplash();
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
