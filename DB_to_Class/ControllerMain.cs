@@ -40,7 +40,7 @@ namespace DB_to_Class
 			}
 		}
 
-		private bool _AddDapperAttributes;
+		private bool _AddDapperAttributes = true;
 		public bool AddDapperAttributes
 		{
 			get { return _AddDapperAttributes; }
@@ -48,6 +48,22 @@ namespace DB_to_Class
 			{
 				_AddDapperAttributes = value;
 				SendPropertyChanged(nameof(AddDapperAttributes));
+			}
+		}
+		
+
+		private bool _AddExtendedAttributes;
+		public bool AddExtendedAttributes
+		{
+			get { return _AddExtendedAttributes; }
+			set
+			{
+				_AddExtendedAttributes = value;
+				if(value)
+				{
+					AddDapperAttributes = true;
+				}
+				SendPropertyChanged(nameof(AddExtendedAttributes));
 			}
 		}
 
@@ -66,7 +82,8 @@ namespace DB_to_Class
 
 		public ControllerMain()
 		{
-			ConnectionString = "Data Source=.;Initial Catalog=CRMAMJDB;Integrated Security=True";
+			ConnectionString = "Data Source=.;Initial Catalog=AccAmj;Integrated Security=True;";
+			SQLString = "SELECT * FROM tblSalesFactor";
 
 			//for (int i = 0; i < 999999999; i++) ;
 

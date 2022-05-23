@@ -33,7 +33,11 @@ namespace DB_to_Class
 					{
 						if (!string.IsNullOrWhiteSpace(controller.SQLString))
 						{
-							if (controller.AddDapperAttributes)
+							if (controller.AddExtendedAttributes)
+							{
+								controller.ResultString = connection.GenerateClass(controller.SQLString, GeneratorBehavior.DapperContribExtended);
+							}
+							else if (controller.AddDapperAttributes)
 							{
 								controller.ResultString = connection.GenerateClass(controller.SQLString, GeneratorBehavior.DapperContrib);
 							}
@@ -44,7 +48,11 @@ namespace DB_to_Class
 						}
 						else
 						{
-							if (controller.AddDapperAttributes)
+							if (controller.AddExtendedAttributes)
+							{
+								controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContribExtended);
+							}
+							else if (controller.AddDapperAttributes)
 							{
 								controller.ResultString = connection.GenerateAllTables(GeneratorBehavior.DapperContrib);
 							}
