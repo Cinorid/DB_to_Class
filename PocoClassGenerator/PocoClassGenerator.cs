@@ -118,7 +118,9 @@ public static partial class PocoClassGenerator
 		
 		// Get Unique Columns
 		var uniqueColumns = new List<string>();
-		string sqlUniqueColumns = $@"SELECT 
+		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
+		{
+			string sqlUniqueColumns = $@"SELECT 
 									     ColumnName = col.name
 									FROM 
 									     sys.indexes ind 
@@ -132,8 +134,7 @@ public static partial class PocoClassGenerator
 									     ind.is_primary_key = 0 
 									     AND ind.is_unique = 1
 										 And t.name = '{tableName}'";
-		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
-		{
+
 			using (var command = connection.CreateCommand(sqlUniqueColumns))
 			using (var reader = command.ExecuteReader())
 			{
@@ -144,7 +145,9 @@ public static partial class PocoClassGenerator
 
 		// get foreign key columns
 		var foreignKeyColumns = new List<Tuple<string, string>>();
-		string sqlForeignKeys = $@"SELECT 
+		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
+		{
+			string sqlForeignKeys = $@"SELECT 
 										    rc.CONSTRAINT_NAME,         
 										    rcu.TABLE_NAME 'ReferencingTable', 
 										    rcu.COLUMN_NAME 'ReferencingColumn',
@@ -161,8 +164,7 @@ public static partial class PocoClassGenerator
 										        ON rc.UNIQUE_CONSTRAINT_CATALOG = rcu1.CONSTRAINT_CATALOG 
 										        AND rc.UNIQUE_CONSTRAINT_NAME = rcu1.CONSTRAINT_NAME
 										WHERE rcu.TABLE_NAME = '{tableName}'";
-		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
-		{
+
 			using (var command = connection.CreateCommand(sqlForeignKeys))
 			using (var reader = command.ExecuteReader())
 			{
