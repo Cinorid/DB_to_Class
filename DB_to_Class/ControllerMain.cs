@@ -79,6 +79,7 @@ namespace DB_to_Class
 		}
 
 		public CommandConvert CommandConvert { get; } = new CommandConvert();
+		public CopyCommand CopyCommand { get; } = new CopyCommand();
 
 		public ControllerMain()
 		{

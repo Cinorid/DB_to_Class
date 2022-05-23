@@ -32,6 +32,7 @@
 			<CheckBox Content="Dapper" HorizontalAlignment="Left" IsChecked="{Binding AddDapperAttributes}"/>
 			<CheckBox Content="Extended" HorizontalAlignment="Left" IsChecked="{Binding AddExtendedAttributes}"/>
 		</StackPanel>
+		<Button Grid.Row="3" Grid.Column="0" Content="Copy" Command="{Binding CopyCommand}" CommandParameter="{Binding .}" VerticalAlignment="Bottom" Margin="3"/>
 		<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ResultString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="3">
 			<TextBox.Style>
 				<Style TargetType="TextBox">
