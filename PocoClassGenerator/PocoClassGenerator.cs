@@ -132,13 +132,16 @@ public static partial class PocoClassGenerator
 									     ind.is_primary_key = 0 
 									     AND ind.is_unique = 1
 										 And t.name = '{tableName}'";
-		using (var command = connection.CreateCommand(sqlUniqueColumns))
-		using (var reader = command.ExecuteReader())
+		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
 		{
-			while (reader.Read())
-				uniqueColumns.Add(reader.GetString(0));
+			using (var command = connection.CreateCommand(sqlUniqueColumns))
+			using (var reader = command.ExecuteReader())
+			{
+				while (reader.Read())
+					uniqueColumns.Add(reader.GetString(0));
+			}
 		}
-		
+
 		// get foreign key columns
 		var foreignKeyColumns = new List<Tuple<string, string>>();
 		string sqlForeignKeys = $@"SELECT 
@@ -158,11 +161,14 @@ public static partial class PocoClassGenerator
 										        ON rc.UNIQUE_CONSTRAINT_CATALOG = rcu1.CONSTRAINT_CATALOG 
 										        AND rc.UNIQUE_CONSTRAINT_NAME = rcu1.CONSTRAINT_NAME
 										WHERE rcu.TABLE_NAME = '{tableName}'";
-		using (var command = connection.CreateCommand(sqlForeignKeys))
-		using (var reader = command.ExecuteReader())
+		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
 		{
-			while (reader.Read())
-				foreignKeyColumns.Add(new Tuple<string, string>(reader.GetString(2), reader.GetString(3)));
+			using (var command = connection.CreateCommand(sqlForeignKeys))
+			using (var reader = command.ExecuteReader())
+			{
+				while (reader.Read())
+					foreignKeyColumns.Add(new Tuple<string, string>(reader.GetString(2), reader.GetString(3)));
+			}
 		}
 
 		//Get Columns 
