@@ -144,32 +144,32 @@ public static partial class PocoClassGenerator
 		}
 
 		// get foreign key columns
-		var foreignKeyColumns = new List<Tuple<string, string>>();
+		var foreignKeyColumns = new List<Tuple<string, string, string>>();
 		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
 		{
 			string sqlForeignKeys = $@"SELECT 
-										    rc.CONSTRAINT_NAME,         
-										    rcu.TABLE_NAME 'ReferencingTable', 
-										    rcu.COLUMN_NAME 'ReferencingColumn',
-										    rcu1.TABLE_NAME 'ReferencedTable',
-										    rcu1.COLUMN_NAME 'ReferencedColumn'
-										FROM
-										    INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
-										INNER JOIN 
-										    INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu 
-										        ON rc.CONSTRAINT_CATALOG = rcu.CONSTRAINT_CATALOG 
-										        AND rc.CONSTRAINT_NAME = rcu.CONSTRAINT_NAME
-										INNER JOIN 
-										    INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu1 
-										        ON rc.UNIQUE_CONSTRAINT_CATALOG = rcu1.CONSTRAINT_CATALOG 
-										        AND rc.UNIQUE_CONSTRAINT_NAME = rcu1.CONSTRAINT_NAME
-										WHERE rcu.TABLE_NAME = '{tableName}'";
+										    FK = fk.name, 
+										    FKTable = OBJECT_NAME(fkcol.[object_id]),
+										    FKCol = fkcol.name,
+										    PKTable = OBJECT_NAME(pkcol.[object_id]),
+										    PKCol = pkcol.name
+										FROM sys.foreign_keys AS fk
+										INNER JOIN sys.foreign_key_columns AS fkc
+										ON fk.[object_id] = fkc.constraint_object_id
+										INNER JOIN sys.columns AS fkcol
+										ON fkc.parent_object_id = fkcol.[object_id]
+										AND fkc.parent_column_id = fkcol.column_id
+										INNER JOIN sys.columns AS pkcol
+										ON fkc.referenced_object_id = pkcol.[object_id]
+										AND fkc.referenced_column_id = pkcol.column_id
+										where OBJECT_NAME(fkcol.[object_id]) = '{tableName}'
+										ORDER BY fkc.constraint_column_id;";
 
 			using (var command = connection.CreateCommand(sqlForeignKeys))
 			using (var reader = command.ExecuteReader())
 			{
 				while (reader.Read())
-					foreignKeyColumns.Add(new Tuple<string, string>(reader.GetString(2), reader.GetString(3)));
+					foreignKeyColumns.Add(new Tuple<string, string, string>(reader.GetString(2), reader.GetString(3), reader.GetString(4)));
 			}
 		}
 
@@ -222,9 +222,9 @@ public static partial class PocoClassGenerator
 						if(uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
 						
-						var foreignKeys = foreignKeyColumns.Where(f => f.Item1 == collumnName);
+						var foreignKeys = foreignKeyColumns.Where(f => f.Item1 == collumnName).ToList();
 						if(foreignKeys.Any())
-							builder.AppendLine("		[ForeignKey(typeof(" + foreignKeys.First().Item2 + "))]");
+							builder.AppendLine("		[ForeignKey(typeof(" + foreignKeys.First().Item2 + "), \"" + foreignKeys.First().Item3 + "\")]");
 					}
 
 					builder.AppendLine(string.Format("		public {0}{1} {2} {{ get; set; }}", name, isNullable ? "?" : string.Empty, collumnName));
