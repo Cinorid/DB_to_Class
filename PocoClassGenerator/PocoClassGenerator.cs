@@ -144,7 +144,7 @@ public static partial class PocoClassGenerator
 		}
 
 		// get foreign key columns
-		var foreignKeyColumns = new List<Tuple<string, string, string>>();
+		var foreignKeyColumns = new List<Tuple<string, string, string, string>>();
 		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
 		{
 			string sqlForeignKeys = $@"SELECT 
@@ -169,7 +169,7 @@ public static partial class PocoClassGenerator
 			using (var reader = command.ExecuteReader())
 			{
 				while (reader.Read())
-					foreignKeyColumns.Add(new Tuple<string, string, string>(reader.GetString(2), reader.GetString(3), reader.GetString(4)));
+					foreignKeyColumns.Add(new Tuple<string, string, string, string>(reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(0)));
 			}
 		}
 
@@ -223,8 +223,30 @@ public static partial class PocoClassGenerator
 							builder.AppendLine("		[UniqueConstraint]");
 						
 						var foreignKeys = foreignKeyColumns.Where(f => f.Item1 == collumnName).ToList();
-						if(foreignKeys.Any())
-							builder.AppendLine("		[ForeignKey(typeof(" + foreignKeys.First().Item2 + "), \"" + foreignKeys.First().Item3 + "\")]");
+						if (foreignKeys.Any())
+						{
+							var foreignKey = foreignKeys.First();
+							
+							var foreignKeyGroups = foreignKeyColumns
+								.Where(x=> x.Item2 == foreignKey.Item2 && x.Item3 == foreignKey.Item3)
+								.OrderBy(x => x.Item4)
+								.ToList();
+							if(foreignKeyGroups.Count() > 1)
+							{
+								for (var batchNumber = 0; batchNumber < foreignKeyGroups.Count; batchNumber++)
+								{
+									if (foreignKey == foreignKeyGroups[batchNumber])
+									{
+										builder.AppendLine("		[ForeignKey(typeof(" + foreignKey.Item2 + "), \"" + foreignKey.Item3 + "\", " + (batchNumber + 1) + ")]");
+										break;
+									}
+								}
+							}
+							else
+							{
+								builder.AppendLine("		[ForeignKey(typeof(" + foreignKey.Item2 + "), \"" + foreignKey.Item3 + "\")]");
+							}
+						}
 					}
 
 					builder.AppendLine(string.Format("		public {0}{1} {2} {{ get; set; }}", name, isNullable ? "?" : string.Empty, collumnName));
