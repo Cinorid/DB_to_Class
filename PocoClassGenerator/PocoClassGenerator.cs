@@ -185,7 +185,7 @@ public static partial class PocoClassGenerator
 				foreach (DataRow row in schema.Rows)
 				{
 					var type = (Type)row["DataType"];
-					var name = TypeAliases.ContainsKey(type) ? TypeAliases[type] : type.FullName;
+					var typeName = TypeAliases.ContainsKey(type) ? TypeAliases[type] : type.FullName;
 					var isNullable = (bool)row["AllowDBNull"] && NullableTypes.Contains(type);
 					var collumnName = (string)row["ColumnName"];
 
@@ -237,26 +237,26 @@ public static partial class PocoClassGenerator
 								{
 									if (foreignKey == foreignKeyGroups[batchNumber])
 									{
-										builder.AppendLine("		[ForeignKey(typeof(" + foreignKey.Item2 + "), \"" + foreignKey.Item3 + "\", " + (batchNumber + 1) + ")]");
+										builder.AppendLine($"		[ForeignKey(typeof({foreignKey.Item2}), nameof({foreignKey.Item2}.{foreignKey.Item3}), {(batchNumber + 1)})]");
 										break;
 									}
 								}
 							}
 							else
 							{
-								builder.AppendLine("		[ForeignKey(typeof(" + foreignKey.Item2 + "), \"" + foreignKey.Item3 + "\")]");
+								builder.AppendLine($"		[ForeignKey(typeof({foreignKey.Item2}), nameof({foreignKey.Item2}.{foreignKey.Item3}))]");
 							}
 						}
 					}
 
-					builder.AppendLine(string.Format("		public {0}{1} {2} {{ get; set; }}", name, isNullable ? "?" : string.Empty, collumnName));
+					builder.AppendLine($"		public {typeName}{(isNullable ? "?" : string.Empty)} {collumnName} {{ get; set; }}");
 				}
 
 				builder.AppendLine("	}");
 				builder.AppendLine();
 			} while (reader.NextResult());
 
-			return builder.ToString();
+			return builder.ToString().TrimEnd();
 		}
 	}
 
