@@ -44,6 +44,10 @@
     <RepositoryUrl>https://github.com/shps951023/PocoClassGenerator</RepositoryUrl>
     <Company>ITWeiHan</Company>
     <LangVersion>8</LangVersion>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+  </ItemGroup>
 </Project>

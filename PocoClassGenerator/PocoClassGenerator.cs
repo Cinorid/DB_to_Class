@@ -18,47 +18,47 @@ public static partial class PocoClassGenerator
 {
 	#region Property
 	private static readonly Dictionary<Type, string> TypeAliases = new Dictionary<Type, string> {
-			   { typeof(int), "int" },
-			   { typeof(short), "short" },
-			   { typeof(byte), "byte" },
-			   { typeof(byte[]), "byte[]" },
-			   { typeof(long), "long" },
-			   { typeof(double), "double" },
-			   { typeof(decimal), "decimal" },
-			   { typeof(float), "float" },
-			   { typeof(bool), "bool" },
-			   { typeof(string), "string" }
-	   };
+		{ typeof(int), "int" },
+		{ typeof(short), "short" },
+		{ typeof(byte), "byte" },
+		{ typeof(byte[]), "byte[]" },
+		{ typeof(long), "long" },
+		{ typeof(double), "double" },
+		{ typeof(decimal), "decimal" },
+		{ typeof(float), "float" },
+		{ typeof(bool), "bool" },
+		{ typeof(string), "string" }
+	};
 
 	private static readonly Dictionary<string, string> QuerySqls = new Dictionary<string, string> {
-			   {"sqlconnection", "select  *  from [{0}] where 1=2" },
-			   {"sqlceserver", "select  *  from [{0}] where 1=2" },
-			   {"sqliteconnection", "select  *  from [{0}] where 1=2" },
-			   {"oracleconnection", "select  *  from \"{0}\" where 1=2" },
-			   {"mysqlconnection", "select  *  from `{0}` where 1=2" },
-			   {"npgsqlconnection", "select  *  from \"{0}\" where 1=2" }
-	   };
+		{ "sqlconnection", "select  *  from [{0}] where 1=2" },
+		{ "sqlceserver", "select  *  from [{0}] where 1=2" },
+		{ "sqliteconnection", "select  *  from [{0}] where 1=2" },
+		{ "oracleconnection", "select  *  from \"{0}\" where 1=2" },
+		{ "mysqlconnection", "select  *  from `{0}` where 1=2" },
+		{ "npgsqlconnection", "select  *  from \"{0}\" where 1=2" }
+	};
 
 	private static readonly Dictionary<string, string> TableSchemaSqls = new Dictionary<string, string> {
-			   {"sqlconnection", "select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_TYPE = 'BASE TABLE'" },
-			   {"sqlceserver", "select TABLE_NAME from INFORMATION_SCHEMA.TABLES  where TABLE_TYPE = 'BASE TABLE'" },
-			   {"sqliteconnection", "SELECT name FROM sqlite_master where type = 'table'" },
-			   {"oracleconnection", "select TABLE_NAME from USER_TABLES where table_name not in (select View_name from user_views)" },
-			   {"mysqlconnection", "select TABLE_NAME from  information_schema.tables where table_type = 'BASE TABLE'" },
-			   {"npgsqlconnection", "select table_name from information_schema.tables where table_type = 'BASE TABLE'" }
-	   };
+		{ "sqlconnection", "select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_TYPE = 'BASE TABLE'" },
+		{ "sqlceserver", "select TABLE_NAME from INFORMATION_SCHEMA.TABLES  where TABLE_TYPE = 'BASE TABLE'" },
+		{ "sqliteconnection", "SELECT name FROM sqlite_master where type = 'table'" },
+		{ "oracleconnection", "select TABLE_NAME from USER_TABLES where table_name not in (select View_name from user_views)" },
+		{ "mysqlconnection", "select TABLE_NAME from  information_schema.tables where table_type = 'BASE TABLE'" },
+		{ "npgsqlconnection", "select table_name from information_schema.tables where table_type = 'BASE TABLE'" }
+	};
 
 
 	private static readonly HashSet<Type> NullableTypes = new HashSet<Type> {
-			   typeof(int),
-			   typeof(short),
-			   typeof(long),
-			   typeof(double),
-			   typeof(decimal),
-			   typeof(float),
-			   typeof(bool),
-			   typeof(DateTime)
-	   };
+		typeof(int),
+		typeof(short),
+		typeof(long),
+		typeof(double),
+		typeof(decimal),
+		typeof(float),
+		typeof(bool),
+		typeof(DateTime)
+	};
 	#endregion
 
 	public static string GenerateAllTables(this System.Data.Common.DbConnection connection, GeneratorBehavior generatorBehavior = GeneratorBehavior.Default)
@@ -90,7 +90,7 @@ public static partial class PocoClassGenerator
 	}
 
 	public static string GenerateClass(this IDbConnection connection, string sql, GeneratorBehavior generatorBehavior)
-		 => connection.GenerateClass(sql, null, generatorBehavior);
+		=> connection.GenerateClass(sql, null, generatorBehavior);
 
 	public static string GenerateClass(this IDbConnection connection, string sql, string className = null, GeneratorBehavior generatorBehavior = GeneratorBehavior.Default)
 	{
@@ -115,7 +115,7 @@ public static partial class PocoClassGenerator
 			builder.AppendFormat("	public class {0}{1}", tableName.Replace(" ", ""), Environment.NewLine);
 			builder.AppendLine("	{");
 		}
-		
+
 		// Get Unique Columns
 		var uniqueColumns = new List<string>();
 		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
@@ -135,12 +135,26 @@ public static partial class PocoClassGenerator
 									     AND ind.is_unique = 1
 										 And t.name = '{tableName}'";
 
-			using (var command = connection.CreateCommand(sqlUniqueColumns))
-			using (var reader = command.ExecuteReader())
-			{
-				while (reader.Read())
-					uniqueColumns.Add(reader.GetString(0));
-			}
+			using var command = connection.CreateCommand(sqlUniqueColumns);
+			using var reader = command.ExecuteReader();
+			while (reader.Read())
+				uniqueColumns.Add(reader.GetString(0));
+		}
+		
+		// Get default Columns
+		var defaultColumns = new List<Tuple<string, string>>();
+		if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended))
+		{
+			string sqlUniqueColumns = $@"SELECT COLUMN_NAME, COLUMN_DEFAULT
+										 FROM INFORMATION_SCHEMA.COLUMNS
+										 WHERE
+										     TABLE_NAME = '{tableName}' AND
+										     COLUMN_DEFAULT is not null ";
+
+			using var command = connection.CreateCommand(sqlUniqueColumns);
+			using var reader = command.ExecuteReader();
+			while (reader.Read())
+				defaultColumns.Add(new Tuple<string, string>(reader.GetString(0), reader.GetString(1)));
 		}
 
 		// get foreign key columns
@@ -192,14 +206,14 @@ public static partial class PocoClassGenerator
 					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMutiTables)
 					{
 						var comments = new[] { "DataTypeName", "IsUnique", "IsKey", "IsAutoIncrement", "IsReadOnly" }
-							   .Select(s =>
-							   {
-								   if (row[s] is bool && ((bool)row[s]))
-									   return s;
-								   if (row[s] is string && !string.IsNullOrWhiteSpace((string)row[s]))
-									   return string.Format(" {0} : {1} ", s, row[s]);
-								   return null;
-							   }).Where(w => w != null).ToArray();
+							.Select(s =>
+							{
+								if (row[s] is bool && ((bool)row[s]))
+									return s;
+								if (row[s] is string && !string.IsNullOrWhiteSpace((string)row[s]))
+									return string.Format(" {0} : {1} ", s, row[s]);
+								return null;
+							}).Where(w => w != null).ToArray();
 						var sComment = string.Join(" , ", comments);
 
 						builder.AppendFormat("		/// <summary>{0}</summary>{1}", sComment, Environment.NewLine);
@@ -219,19 +233,20 @@ public static partial class PocoClassGenerator
 
 					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended) && !isFromMutiTables)
 					{
-						if(uniqueColumns.Contains(collumnName))
+						if (uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
 						
-						var foreignKeys = foreignKeyColumns.Where(f => f.Item1 == collumnName).ToList();
-						if (foreignKeys.Any())
+						if (!isNullable && defaultColumns.All(d => d.Item1 != collumnName))
+							builder.AppendLine("		[System.ComponentModel.DataAnnotations.Required()]");
+
+						var foreignKey = foreignKeyColumns.FirstOrDefault(f => f.Item1 == collumnName);
+						if (foreignKey != null)
 						{
-							var foreignKey = foreignKeys.First();
-							
 							var foreignKeyGroups = foreignKeyColumns
-								.Where(x=> x.Item2 == foreignKey.Item2 && x.Item3 == foreignKey.Item3)
+								.Where(x => x.Item2 == foreignKey.Item2 && x.Item3 == foreignKey.Item3)
 								.OrderBy(x => x.Item4)
 								.ToList();
-							if(foreignKeyGroups.Count() > 1)
+							if (foreignKeyGroups.Count() > 1)
 							{
 								for (var batchNumber = 0; batchNumber < foreignKeyGroups.Count; batchNumber++)
 								{
