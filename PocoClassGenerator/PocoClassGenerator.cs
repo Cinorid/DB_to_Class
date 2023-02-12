@@ -202,6 +202,8 @@ public static partial class PocoClassGenerator
 					var typeName = TypeAliases.ContainsKey(type) ? TypeAliases[type] : type.FullName;
 					var allowDbNull = (bool)row["AllowDBNull"];
 					var isNullable = allowDbNull && NullableTypes.Contains(type);
+					var isKey = (bool)row["IsKey"];
+					var isAutoIncrement = (bool)row["IsAutoIncrement"];
 					var collumnName = (string)row["ColumnName"];
 					
 					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMutiTables)
@@ -220,15 +222,21 @@ public static partial class PocoClassGenerator
 						builder.AppendFormat("		/// <summary>{0}</summary>{1}", sComment, Environment.NewLine);
 					}
 
+					bool key = false, explicitKey = false, computed = false;
+					if (isKey && isAutoIncrement)
+						key = true;
+					else if (isKey && !isAutoIncrement)
+						explicitKey = true;
+					else if (!isKey && isAutoIncrement)
+						computed = true;
+
 					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContrib) && !isFromMutiTables)
 					{
-						var isKey = (bool)row["IsKey"];
-						var isAutoIncrement = (bool)row["IsAutoIncrement"];
-						if (isKey && isAutoIncrement)
+						if (key)
 							builder.AppendLine("		[Dapper.Contrib.Extensions.Key]");
-						if (isKey && !isAutoIncrement)
+						if (explicitKey)
 							builder.AppendLine("		[Dapper.Contrib.Extensions.ExplicitKey]");
-						if (!isKey && isAutoIncrement)
+						if (computed)
 							builder.AppendLine("		[Dapper.Contrib.Extensions.Computed]");
 					}
 
@@ -237,7 +245,7 @@ public static partial class PocoClassGenerator
 						if (uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
 						
-						if (!allowDbNull && defaultColumns.All(d => d.Item1 != collumnName))
+						if (!allowDbNull && !(key || computed) && defaultColumns.All(d => d.Item1 != collumnName))
 							builder.AppendLine("		[System.ComponentModel.DataAnnotations.Required()]");
 
 						var foreignKey = foreignKeyColumns.FirstOrDefault(f => f.Item1 == collumnName);
