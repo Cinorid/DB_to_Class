@@ -200,9 +200,10 @@ public static partial class PocoClassGenerator
 				{
 					var type = (Type)row["DataType"];
 					var typeName = TypeAliases.ContainsKey(type) ? TypeAliases[type] : type.FullName;
-					var isNullable = (bool)row["AllowDBNull"] && NullableTypes.Contains(type);
+					var allowDbNull = (bool)row["AllowDBNull"];
+					var isNullable = allowDbNull && NullableTypes.Contains(type);
 					var collumnName = (string)row["ColumnName"];
-
+					
 					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMutiTables)
 					{
 						var comments = new[] { "DataTypeName", "IsUnique", "IsKey", "IsAutoIncrement", "IsReadOnly" }
@@ -236,7 +237,7 @@ public static partial class PocoClassGenerator
 						if (uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
 						
-						if (!isNullable && defaultColumns.All(d => d.Item1 != collumnName))
+						if (!allowDbNull && defaultColumns.All(d => d.Item1 != collumnName))
 							builder.AppendLine("		[System.ComponentModel.DataAnnotations.Required()]");
 
 						var foreignKey = foreignKeyColumns.FirstOrDefault(f => f.Item1 == collumnName);
