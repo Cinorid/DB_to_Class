@@ -205,6 +205,7 @@ public static partial class PocoClassGenerator
 					var isKey = (bool)row["IsKey"];
 					var isAutoIncrement = (bool)row["IsAutoIncrement"];
 					var collumnName = (string)row["ColumnName"];
+					var defaultValue = defaultColumns.FirstOrDefault(d => d.Item1 == collumnName)?.Item2;
 					
 					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMutiTables)
 					{
@@ -245,8 +246,13 @@ public static partial class PocoClassGenerator
 						if (uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
 						
-						if (!allowDbNull && !(key || computed) && defaultColumns.All(d => d.Item1 != collumnName))
+						if (!allowDbNull && !(key || computed) && string.IsNullOrEmpty(defaultValue))
 							builder.AppendLine("		[System.ComponentModel.DataAnnotations.Required()]");
+
+						if (!string.IsNullOrEmpty(defaultValue) && !defaultValue.Contains('\''))
+							builder.AppendLine($"		[System.ComponentModel.DefaultValue(null)]//Default Value: {defaultValue}");
+						else if (!string.IsNullOrEmpty(defaultValue))
+							builder.AppendLine($"		[System.ComponentModel.DefaultValue{defaultValue.Replace("'", "\"")}]");
 
 						var foreignKey = foreignKeyColumns.FirstOrDefault(f => f.Item1 == collumnName);
 						if (foreignKey != null)
