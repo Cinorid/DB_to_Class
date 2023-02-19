@@ -249,7 +249,7 @@ public static partial class PocoClassGenerator
 						if (!allowDbNull && !(key || computed) && string.IsNullOrEmpty(defaultValue))
 							builder.AppendLine("		[System.ComponentModel.DataAnnotations.Required()]");
 
-						if (!string.IsNullOrEmpty(defaultValue) && !defaultValue.Contains('\''))
+						if ((type == typeof(string) || type == typeof(DateTime)) && !string.IsNullOrEmpty(defaultValue) && !defaultValue.Contains('\''))
 							builder.AppendLine($"		[System.ComponentModel.DefaultValue(null)]//Default Value: {defaultValue}");
 						else if (!string.IsNullOrEmpty(defaultValue))
 							builder.AppendLine($"		[System.ComponentModel.DefaultValue{defaultValue.Replace("'", "\"")}]");
