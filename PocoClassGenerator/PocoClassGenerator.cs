@@ -101,16 +101,16 @@ public static partial class PocoClassGenerator
 		string tableName;
 		//Get Table Name
 		//Fix : [When View using CommandBehavior.KeyInfo will get duplicate columns �P Issue #8 �P shps951023/PocoClassGenerator](https://github.com/shps951023/PocoClassGenerator/issues/8 )
-		var isFromMutiTables = false;
+		var isFromMultiTables = false;
 		using (var command = connection.CreateCommand(sql))
 		using (var reader = command.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SingleRow))
 		{
 			var tables = reader.GetSchemaTable().Select().Select(s => s["BaseTableName"] as string).Distinct();
 			tableName = string.IsNullOrWhiteSpace(className) ? tables.First() ?? "Info" : className;
 
-			isFromMutiTables = tables.Count() > 1;
+			isFromMultiTables = tables.Count() > 1;
 
-			if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContrib) && !isFromMutiTables)
+			if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContrib) && !isFromMultiTables)
 				builder.AppendFormat("	[Dapper.Contrib.Extensions.Table(\"{0}\")]{1}", tableName, Environment.NewLine);
 			builder.AppendFormat("	public class {0}{1}", tableName.Replace(" ", ""), Environment.NewLine);
 			builder.AppendLine("	{");
@@ -188,7 +188,7 @@ public static partial class PocoClassGenerator
 		}
 
 		//Get Columns 
-		var behavior = isFromMutiTables ? (CommandBehavior.SchemaOnly | CommandBehavior.SingleRow) : (CommandBehavior.KeyInfo | CommandBehavior.SingleRow);
+		var behavior = isFromMultiTables ? (CommandBehavior.SchemaOnly | CommandBehavior.SingleRow) : (CommandBehavior.KeyInfo | CommandBehavior.SingleRow);
 
 		using (var command = connection.CreateCommand(sql))
 		using (var reader = command.ExecuteReader(behavior))
@@ -207,7 +207,7 @@ public static partial class PocoClassGenerator
 					var collumnName = (string)row["ColumnName"];
 					var defaultValue = defaultColumns.FirstOrDefault(d => d.Item1 == collumnName)?.Item2;
 					
-					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMutiTables)
+					if (generatorBehavior.HasFlag(GeneratorBehavior.Comment) && !isFromMultiTables)
 					{
 						var comments = new[] { "DataTypeName", "IsUnique", "IsKey", "IsAutoIncrement", "IsReadOnly" }
 							.Select(s =>
@@ -231,7 +231,7 @@ public static partial class PocoClassGenerator
 					else if (!isKey && isAutoIncrement)
 						computed = true;
 
-					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContrib) && !isFromMutiTables)
+					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContrib) && !isFromMultiTables)
 					{
 						if (key)
 							builder.AppendLine("		[Dapper.Contrib.Extensions.Key]");
@@ -241,7 +241,7 @@ public static partial class PocoClassGenerator
 							builder.AppendLine("		[Dapper.Contrib.Extensions.Computed]");
 					}
 
-					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended) && !isFromMutiTables)
+					if (generatorBehavior.HasFlag(GeneratorBehavior.DapperContribExtended) && !isFromMultiTables)
 					{
 						if (uniqueColumns.Contains(collumnName))
 							builder.AppendLine("		[UniqueConstraint]");
@@ -280,7 +280,11 @@ public static partial class PocoClassGenerator
 					}
 
 					builder.AppendLine($"		public {typeName}{(isNullable ? "?" : string.Empty)} {collumnName} {{ get; set; }}");
+					builder.AppendLine($"		");
 				}
+
+				var stringToTrim = "		" + Environment.NewLine;
+				builder.Remove(builder.Length - stringToTrim.Length, stringToTrim.Length);
 
 				builder.AppendLine("	}");
 				builder.AppendLine();
